@@ -40,6 +40,12 @@ const getCountryData = function(country) {
     })
 }
 
+const getPosition = function () {
+	return new Promise(function(resolve, reject) {
+		navigator.geolocation.getCurrentPosition(resolve, reject);
+	})
+}
+
 const whereIsIt = function(lat, lng) {
     fetch(`https://geocode.xyz/${lat},${lng}?geoit=json`).then(response => {
 		// console.log(response);
@@ -55,5 +61,13 @@ const whereIsIt = function(lat, lng) {
 	}).catch(err => renderError(err));
 }
 
-// getCountryData('Bharat');
-whereIsIt(-33.933, 18.474);
+const whereAmI = function() {
+    getPosition().then(pos => {
+        console.log(pos);
+        const {latitude: lat, longitude: lng} = pos.coords;
+
+        whereIsIt(`${lat}`, `${lng}`);
+    }).catch(err => console.log(err))
+}
+
+btn.addEventListener('click', whereAmI);
